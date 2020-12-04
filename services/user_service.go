@@ -15,3 +15,12 @@ func CreateUser (user users.User)(*users.User, *errors.RestError){
   }
   return &user, nil
 }
+
+//GetUser using the user Id supplied 
+func GetUser(id int64)(*users.User, *errors.RestError){
+  result := users.User{ID: id}
+  if err := result.Get(); err !=  nil {
+    return nil, err
+  }
+  return  &result, nil
+}
