@@ -6,6 +6,7 @@ import (
 	"github.com/ab3llo/bookstore_users-api/utils/errors"
 )
 
+// User dto
 type User struct {
   ID int64 `json:"id"`
   FirstName string `json:"firstName"`

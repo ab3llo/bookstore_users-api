@@ -5,5 +5,5 @@
 To run a MySQL database in docker run the following command
 
 ```
-  docker run --name user-db -e MYSQL_ROOT_PASSWORD=passowrd -p 3306:3306 -d mysql:latest
+  docker run --name user-db -e MYSQL_ROOT_PASSWORD=password -p 3306:3306 -d mysql:latest
 ```
