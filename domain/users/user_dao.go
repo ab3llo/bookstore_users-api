@@ -4,13 +4,11 @@ import (
 	"fmt"
 
 	database "github.com/ab3llo/bookstore_users-api/datasources/mysql/client"
-	"github.com/ab3llo/bookstore_users-api/utils/date"
 	"github.com/ab3llo/bookstore_users-api/utils/errors"
 )
 
-
-var (
-  usersDB = make(map[int64]*User)
+const (
+  queryInsertUser ="INSERT INTO users(firstName, lastName, email, dateCreated) VALUES(?,?,?,?);"
 )
 
 // Get user by id from db
@@ -18,7 +16,7 @@ func (user *User) Get() *errors.RestError {
   if err := database.Client.Ping(); err != nil {
     panic(err)
   }
-  result := usersDB[user.ID]
+  result := user
   if result == nil {
     return errors.NewNotFoundError(fmt.Sprintf("User with id: %d not found", user.ID))
   }
@@ -33,14 +31,23 @@ func (user *User) Get() *errors.RestError {
 
 //Save a user to db
 func (user *User) Save() *errors.RestError {
-  current := usersDB[user.ID]
-  if current != nil {
-    if current.Email == user.Email {
-      return errors.NewBadRequestError(fmt.Sprintf("email address %s is already registered", user.Email))
-    }
-    return errors.NewBadRequestError(fmt.Sprintf("user %d already exists", user.ID))
+  statement, err := database.Client.Prepare(queryInsertUser)
+  if err != nil {
+    return errors.NewInternalServerError(err.Error())
   }
-  user.DateCreated = date.GetNow()
-  usersDB[user.ID] = user
+  defer statement.Close()
+
+  insertResult, err := statement.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated)
+  if err != nil {
+    return errors.NewInternalServerError(
+      fmt.Sprintf("error when trying to save user: %s",err.Error()))
+  }
+  
+  userID, err := insertResult.LastInsertId()
+  if err != nil {
+    return errors.NewInternalServerError(
+      fmt.Sprintf("error when trying to save user: %s",err.Error()))
+  }
+  user.ID = userID
   return nil
 }

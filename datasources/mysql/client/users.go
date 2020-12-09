@@ -6,6 +6,9 @@ import (
 	"log"
 
 	"github.com/ab3llo/bookstore_users-api/config"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+
 	// import go sql driver
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
@@ -26,12 +29,10 @@ func init(){
     conf.Datbase.Host,
     conf.Datbase.Schema,
   )
-  Client, err := sql.Open("mysql", dataSourceName)
+  Client, err := gorm.Open(mysql.Open(dataSourceName), &gorm.Config{})
   if err != nil {
     panic(err)
   }
-  if err = Client.Ping(); err != nil {
-    panic(err)
-  }
+  Client.DB()
   log.Println("database sucessfully configured.")
 }
