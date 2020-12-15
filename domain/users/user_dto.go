@@ -2,17 +2,21 @@ package users
 
 import (
 	"strings"
+	"time"
 
 	"github.com/ab3llo/bookstore_users-api/utils/errors"
+	"gorm.io/gorm"
 )
 
 // User dto
 type User struct {
-	ID          int64  `json:"id"`
-	FirstName   string `json:"firstName"`
-	LastName    string `json:"lastName"`
-	Email       string `json:"email"`
-	DateCreated string `json:"dateCreated"`
+	ID        int64          `json:"id"`
+	CreatedAt time.Time      `json:"createdAt"`
+	UpdatedAt time.Time      `json:"updatedAt"`
+	DeletedAt gorm.DeletedAt `json:"deletedAt"`
+	FirstName string         `json:"firstName"`
+	LastName  string         `json:"lastName"`
+	Email     string         `json:"email" sql:"not null;unique"`
 }
 
 // Validate user struct

@@ -22,7 +22,7 @@ var (
 func init() {
 	godotenv.Load()
 	conf := config.New()
-	dataSourceName := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8",
+	dataSourceName := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=true",
 		conf.Datbase.Username,
 		conf.Datbase.Password,
 		conf.Datbase.Host,
