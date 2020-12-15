@@ -1,7 +1,6 @@
 package database
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 
@@ -15,24 +14,24 @@ import (
 )
 
 var (
-  //Client for database
-  Client *sql.DB
+	//Client for database
+	Client  *gorm.DB
+	dbError error
 )
 
-
-func init(){
-  godotenv.Load()
-  conf := config.New()
-  dataSourceName := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8", 
-    conf.Datbase.Username, 
-    conf.Datbase.Password,
-    conf.Datbase.Host,
-    conf.Datbase.Schema,
-  )
-  Client, err := gorm.Open(mysql.Open(dataSourceName), &gorm.Config{})
-  if err != nil {
-    panic(err)
-  }
-  Client.DB()
-  log.Println("database sucessfully configured.")
+func init() {
+	godotenv.Load()
+	conf := config.New()
+	dataSourceName := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8",
+		conf.Datbase.Username,
+		conf.Datbase.Password,
+		conf.Datbase.Host,
+		conf.Datbase.Schema,
+	)
+	Client, dbError = gorm.Open(mysql.Open(dataSourceName), &gorm.Config{})
+	if dbError != nil {
+		panic(dbError)
+	}
+	Client.DB()
+	log.Println("database successfully configured.")
 }
