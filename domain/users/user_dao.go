@@ -1,8 +1,9 @@
 package users
 
 import (
-	"fmt"
 	"log"
+
+	"github.com/ab3llo/bookstore_users-api/utils/mysql_utils"
 
 	database "github.com/ab3llo/bookstore_users-api/datasources/mysql/client"
 	"github.com/ab3llo/bookstore_users-api/utils/errors"
@@ -12,7 +13,7 @@ import (
 func (user *User) Get() *errors.RestError {
 	result := database.Client.First(user, user.ID)
 	if result.Error != nil {
-		return errors.NewNotFoundError(fmt.Sprintf("User with id: %d not found", user.ID))
+		return mysql_utils.ParseError(result.Error)
 	}
 	return nil
 }
@@ -21,7 +22,7 @@ func (user *User) Get() *errors.RestError {
 func (user *User) GetAll() ([]*User, *errors.RestError) {
 	var records []*User
 	if db := database.Client.Find(&records); db.Error != nil {
-		return nil, errors.NewInternalServerError(fmt.Sprintf("Error %s", db.Error))
+		return nil, mysql_utils.ParseError(db.Error)
 	}
 	return records, nil
 }
@@ -30,8 +31,7 @@ func (user *User) GetAll() ([]*User, *errors.RestError) {
 func (user *User) Save() *errors.RestError {
 	result := database.Client.Create(user)
 	if result.Error != nil {
-		return errors.NewInternalServerError(
-			fmt.Sprintf("error when trying to save user: %s", result.Error.Error()))
+		return mysql_utils.ParseError(result.Error)
 	}
 	log.Printf("Created user record with id: %d", user.ID)
 	return nil
@@ -42,14 +42,12 @@ func (user *User) Update() *errors.RestError {
 	var currentUser = &User{ID: user.ID}
 	result := database.Client.First(currentUser)
 	if result.Error != nil {
-		return errors.NewNotFoundError(
-			fmt.Sprintf("User with id: %d not found", user.ID))
+		return mysql_utils.ParseError(result.Error)
 	}
 	user.CreatedAt = currentUser.CreatedAt
 	err := database.Client.Model(&user).Updates(user).Error
 	if err != nil {
-		return errors.NewBadRequestError(
-			fmt.Sprintf("error when trying to update user: %s", err.Error()))
+		return mysql_utils.ParseError(err)
 	}
 
 	log.Printf("Updated user record with id: %d", user.ID)
@@ -60,8 +58,7 @@ func (user *User) Update() *errors.RestError {
 func (user *User) Delete() *errors.RestError {
 	result := database.Client.Unscoped().Delete(user)
 	if result.Error != nil {
-		return errors.NewNotFoundError(
-			fmt.Sprintf("User with id: %d not found", user.ID))
+		return mysql_utils.ParseError(result.Error)
 	}
 	log.Printf("Deleted user record with id: %d", user.ID)
 	return nil

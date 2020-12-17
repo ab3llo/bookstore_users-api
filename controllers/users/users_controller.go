@@ -45,6 +45,7 @@ func GetUser(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+//GetAll returns all users
 func GetAll(c *gin.Context) {
 	result, getErr := services.GetAllUsers()
 	if getErr != nil {
