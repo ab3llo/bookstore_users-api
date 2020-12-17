@@ -6,8 +6,23 @@ import (
 	"github.com/ab3llo/bookstore_users-api/utils/errors"
 )
 
+var (
+	UsersService usersServiceInterface = &usersService{}
+)
+
+type usersService struct {
+}
+
+type usersServiceInterface interface {
+	CreateUser(users.User) (*users.User, *errors.RestError)
+	GetUser(int64) (*users.User, *errors.RestError)
+	GetAllUsers() ([]*users.User, *errors.RestError)
+	UpdateUser(users.User) (*users.User, *errors.RestError)
+	DeleteUser(int64) (*users.User, *errors.RestError)
+}
+
 // CreateUser creates a user
-func CreateUser(user users.User) (*users.User, *errors.RestError) {
+func (service *usersService) CreateUser(user users.User) (*users.User, *errors.RestError) {
 	user.Password = crypto_utils.HashPassword(user.Password)
 	if err := user.Validate(); err != nil {
 		return nil, err
@@ -19,7 +34,7 @@ func CreateUser(user users.User) (*users.User, *errors.RestError) {
 }
 
 //UpdateUser updates user
-func UpdateUser(user users.User) (*users.User, *errors.RestError) {
+func (service *usersService) UpdateUser(user users.User) (*users.User, *errors.RestError) {
 	user.Password = crypto_utils.HashPassword(user.Password)
 	if err := user.Validate(); err != nil {
 		return nil, err
@@ -31,7 +46,7 @@ func UpdateUser(user users.User) (*users.User, *errors.RestError) {
 }
 
 //GetUser using the user Id supplied
-func GetUser(id int64) (*users.User, *errors.RestError) {
+func (service *usersService) GetUser(id int64) (*users.User, *errors.RestError) {
 	user := users.User{ID: id}
 	if err := user.Get(); err != nil {
 		return nil, err
@@ -40,7 +55,7 @@ func GetUser(id int64) (*users.User, *errors.RestError) {
 }
 
 //GetAllUsers get users
-func GetAllUsers() ([]*users.User, *errors.RestError) {
+func (service *usersService) GetAllUsers() ([]*users.User, *errors.RestError) {
 	user := users.User{}
 	users, err := user.GetAll()
 	if err != nil {
@@ -50,7 +65,7 @@ func GetAllUsers() ([]*users.User, *errors.RestError) {
 }
 
 //DeleteUser using the user Id supplied
-func DeleteUser(id int64) (*users.User, *errors.RestError) {
+func (service *usersService) DeleteUser(id int64) (*users.User, *errors.RestError) {
 	user := users.User{ID: id}
 	if err := user.Delete(); err != nil {
 		return nil, err
