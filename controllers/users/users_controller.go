@@ -45,6 +45,15 @@ func GetUser(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+func GetAll(c *gin.Context) {
+	result, getErr := services.GetAllUsers()
+	if getErr != nil {
+		c.JSON(getErr.Status, getErr)
+		return
+	}
+	c.JSON(http.StatusOK, result)
+}
+
 //UpdateUser updates a user entry
 func UpdateUser(c *gin.Context) {
 	userID, userErr := strconv.ParseInt(c.Param("user_id"), 10, 64)

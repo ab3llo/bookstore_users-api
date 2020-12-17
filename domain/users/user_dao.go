@@ -17,6 +17,15 @@ func (user *User) Get() *errors.RestError {
 	return nil
 }
 
+//GetAll users
+func (user *User) GetAll() ([]*User, *errors.RestError) {
+	var records []*User
+	if db := database.Client.Find(&records); db.Error != nil {
+		return nil, errors.NewInternalServerError(fmt.Sprintf("Error %s", db.Error))
+	}
+	return records, nil
+}
+
 //Save a user to db
 func (user *User) Save() *errors.RestError {
 	result := database.Client.Create(user)

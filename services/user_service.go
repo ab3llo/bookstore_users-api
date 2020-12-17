@@ -38,6 +38,16 @@ func GetUser(id int64) (*users.User, *errors.RestError) {
 	return &user, nil
 }
 
+//GetAllUsers get users
+func GetAllUsers() ([]*users.User, *errors.RestError) {
+	user := users.User{}
+	users, err := user.GetAll()
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
+}
+
 //DeleteUser using the user Id supplied
 func DeleteUser(id int64) (*users.User, *errors.RestError) {
 	user := users.User{ID: id}
