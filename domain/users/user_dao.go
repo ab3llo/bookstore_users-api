@@ -57,7 +57,13 @@ func (user *User) Update() *errors.RestError {
 
 //Delete User in db
 func (user *User) Delete() *errors.RestError {
-	result := database.Client.Unscoped().Delete(user)
+	var currentUser = &User{ID: user.ID}
+	result := database.Client.First(currentUser)
+	if result.Error != nil {
+		logger.Error("error when trying to get user details", result.Error)
+		return mysql_utils.ParseError(result.Error)
+	}
+	result = database.Client.Unscoped().Delete(user)
 	if result.Error != nil {
 		logger.Error("error when trying to delete user details", result.Error)
 		return mysql_utils.ParseError(result.Error)
