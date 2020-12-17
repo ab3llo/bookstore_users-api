@@ -2,12 +2,13 @@ package services
 
 import (
 	"github.com/ab3llo/bookstore_users-api/domain/users"
+	"github.com/ab3llo/bookstore_users-api/utils/crypto_utils"
 	"github.com/ab3llo/bookstore_users-api/utils/errors"
 )
 
 // CreateUser creates a user
 func CreateUser(user users.User) (*users.User, *errors.RestError) {
-	//user.CreatedAt = date.GetNow()
+	user.Password = crypto_utils.HashPassword(user.Password)
 	if err := user.Validate(); err != nil {
 		return nil, err
 	}
@@ -19,7 +20,7 @@ func CreateUser(user users.User) (*users.User, *errors.RestError) {
 
 //UpdateUser updates user
 func UpdateUser(user users.User) (*users.User, *errors.RestError) {
-
+	user.Password = crypto_utils.HashPassword(user.Password)
 	if err := user.Validate(); err != nil {
 		return nil, err
 	}

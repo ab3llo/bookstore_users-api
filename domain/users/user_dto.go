@@ -17,6 +17,7 @@ type User struct {
 	FirstName string         `json:"firstName"`
 	LastName  string         `json:"lastName"`
 	Email     string         `json:"email" sql:"not null;unique"`
+	Password  string         `json:"-"`
 }
 
 // Validate user struct
