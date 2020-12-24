@@ -1,6 +1,7 @@
 package users
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -14,7 +15,7 @@ import (
 
 // CreateUser creates a user
 func CreateUser(c *gin.Context) {
-	var user users.User
+	var user *users.User
 	if err := c.ShouldBindJSON(&user); err != nil {
 		restErr := errors.NewBadRequestError("invalid json body")
 		c.JSON(restErr.Status, restErr)
@@ -45,6 +46,24 @@ func GetUser(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+//Login with email and password
+func Login(c *gin.Context) {
+	var request *users.LoginRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		restErr := errors.NewBadRequestError("invalid json body")
+		c.JSON(restErr.Status, restErr)
+		return
+	}
+	fmt.Println("request: ")
+	fmt.Println(request)
+	result, err := services.UsersService.Login(request)
+	if err != nil {
+		c.JSON(err.Status, err)
+		return
+	}
+	c.JSON(http.StatusOK, result)
+}
+
 //GetAll returns all users
 func GetAll(c *gin.Context) {
 	result, getErr := services.UsersService.GetAllUsers()
@@ -65,7 +84,7 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 
-	var user users.User
+	var user *users.User
 	if err := c.ShouldBindJSON(&user); err != nil {
 		restErr := errors.NewBadRequestError("invalid json body")
 		c.JSON(restErr.Status, restErr)

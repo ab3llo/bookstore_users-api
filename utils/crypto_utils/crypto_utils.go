@@ -1,20 +1,36 @@
 package crypto_utils
 
 import (
-	"log"
+	"crypto/rand"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
-//HashPassword takes password as string and returns salted password hash
-func HashPassword(password string) string {
-	var passwordByte = ConvertStringToByte(password)
-	hash, err := bcrypt.GenerateFromPassword(passwordByte, bcrypt.MinCost)
+// Define salt size
+const saltSize = 16
+
+func GenerateRandomSalt(saltSize int) []byte {
+	var salt = make([]byte, saltSize)
+
+	_, err := rand.Read(salt[:])
+
 	if err != nil {
-		log.Println(err)
-		return ""
+		panic(err)
 	}
-	return string(hash)
+
+	return salt
+}
+
+//HashPassword take plaintext password and salt and return hash
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 16)
+	return string(bytes), err
+}
+
+//Compare compares passsword in db with password supplied
+func Compare(hash, password string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
 }
 
 //ConvertStringToByte takes a string and return byte array

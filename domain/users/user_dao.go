@@ -18,6 +18,16 @@ func (user *User) Get() *errors.RestError {
 	return nil
 }
 
+//FindByEmail find user by email
+func (user *User) FindByEmail() *errors.RestError {
+	result := database.Client.Where("email =?", user.Email).First(&user)
+	if result.Error != nil {
+		logger.Error("error when trying to find user by email and password", result.Error)
+		return mysql_utils.ParseError(result.Error)
+	}
+	return nil
+}
+
 //GetAll users
 func (user *User) GetAll() ([]*User, *errors.RestError) {
 	var records []*User

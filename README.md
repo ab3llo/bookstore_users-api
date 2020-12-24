@@ -1,5 +1,7 @@
 # bookstore_users-api
 
+MVC Pattern
+
 ### MySQL Database Setup
 
 To run a MySQL database in docker run the following command
