@@ -32,14 +32,14 @@ func (service *usersService) CreateUser(user *users.User) (*users.User, *errors.
 		return nil, errors.NewBadRequestError(err.Error())
 	}
 	user.Password = hashedPassword
-	log.Println("hash password: " + user.Password)
 	if err := user.Validate(); err != nil {
 		return nil, err
 	}
 	if err := user.Save(); err != nil {
 		return nil, err
 	}
-	log.Println("hash password: " + user.Password)
+	//delete password from response
+	user.Password = ""
 	return user, nil
 }
 
@@ -49,6 +49,7 @@ func (service *usersService) UpdateUser(user *users.User) (*users.User, *errors.
 	if err != nil {
 		return nil, errors.NewBadRequestError(err.Error())
 	}
+	log.Println("Password: " + user.Password + "HashedPassword: " + hashedPassword)
 	user.Password = hashedPassword
 	if err := user.Validate(); err != nil {
 		return nil, err
@@ -56,6 +57,8 @@ func (service *usersService) UpdateUser(user *users.User) (*users.User, *errors.
 	if err := user.Update(); err != nil {
 		return nil, err
 	}
+	//delete password from response
+	user.Password = ""
 	return user, nil
 }
 
@@ -78,6 +81,8 @@ func (service *usersService) Login(request *users.LoginRequest) (*users.User, *e
 		// TODO: Properly handle error
 		log.Println("Auth failed")
 	}
+	//delete password from response
+	user.Password = ""
 	return user, nil
 }
 

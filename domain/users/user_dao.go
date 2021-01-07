@@ -40,6 +40,7 @@ func (user *User) GetAll() ([]*User, *errors.RestError) {
 
 //Save a user to db
 func (user *User) Save() *errors.RestError {
+	user.Status = StatusActive
 	result := database.Client.Create(user)
 	if result.Error != nil {
 		logger.Error("error when trying to get save user details", result.Error)
@@ -57,7 +58,7 @@ func (user *User) Update() *errors.RestError {
 		return mysql_utils.ParseError(result.Error)
 	}
 	user.CreatedAt = currentUser.CreatedAt
-	err := database.Client.Model(&user).Updates(user).Error
+	err := database.Client.Save(&user).Error
 	if err != nil {
 		logger.Error("error when trying to update user details", result.Error)
 		return mysql_utils.ParseError(err)

@@ -2,6 +2,7 @@ package users
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -21,8 +22,10 @@ func CreateUser(c *gin.Context) {
 		c.JSON(restErr.Status, restErr)
 		return
 	}
-
+	log.Print("user: ")
+	log.Println(user)
 	result, saveErr := services.UsersService.CreateUser(user)
+
 	if saveErr != nil {
 		c.JSON(saveErr.Status, saveErr)
 		return
