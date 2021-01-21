@@ -20,9 +20,9 @@ func (user *User) Get() *errors.RestError {
 
 //FindByEmail find user by email
 func (user *User) FindByEmail() *errors.RestError {
-	result := database.Client.Where("email =?", user.Email).First(&user)
+	result := database.Client.Where("email =? AND status=?", user.Email, "active").First(&user)
 	if result.Error != nil {
-		logger.Error("error when trying to find user by email and password", result.Error)
+		logger.Error("error when trying to find user by email", result.Error)
 		return mysql_utils.ParseError(result.Error)
 	}
 	return nil
